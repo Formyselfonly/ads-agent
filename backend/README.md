@@ -1,4 +1,4 @@
-# 智能广告 Agent 项目
+# 智能广告Agent后端服务
 
 ## 产品定义
 
@@ -21,7 +21,6 @@
 - **SQLModel**: 现代化ORM
 - **LangChain/OpenAI/DeepSeek**: AI大模型能力
 - **SQLite**: 轻量级数据库（开发环境）
-- **React + Vite**: 现代前端开发
 - **Docker**: 容器化部署
 
 ---
@@ -32,8 +31,11 @@
 - `adresult`：广告效果表
 - `agentlog`：Agent日志表
 - `ai_advice`：AI建议表
+  - id, campaign_id, type, content, status, created_at, executed_at, approved_by
 - `ai_execution`：AI建议执行记录表
+  - id, advice_id, result, executed_at
 - `industry_brief`：行业快讯/AI摘要表
+  - id, date, content, raw_data
 
 ---
 
@@ -54,7 +56,7 @@
 - `POST /api/campaigns/{id}/agent/optimize` - 基于历史数据自动优化
 - `GET /api/campaigns/{id}/decisions` - 获取AI决策链路
 - `GET /api/campaigns/{id}/logs` - 获取AI执行日志
-- `GET /api/ai/daily-brief` - 获取每日行业快讯/AI摘要
+- `GET /api/ai/daily-brief` - 获取每日行业快讯/AI摘要（建议定时任务写入industry_brief表）
 - `POST /api/ai/advise` - 生成AI建议（多活动/全局）
 - `POST /api/ai/execute` - 执行AI建议
 - `POST /api/ai/approve` - 用户审批AI建议
@@ -77,83 +79,45 @@
 
 ---
 
-## 本地启动与运行
+## 快速开始
 
-### 1. 启动后端（FastAPI）
-
-1. 进入后端目录
-   ```sh
-   cd backend
-   ```
-2. （可选）创建并激活虚拟环境
-   - Windows:
-     ```sh
-     python -m venv venv
-     venv\Scripts\activate
-     ```
-   - macOS/Linux:
-     ```sh
-     python3 -m venv venv
-     source venv/bin/activate
-     ```
-3. 安装依赖
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. 配置API KEY（在 backend/.env 文件中填写 OpenAI/DeepSeek/NewsAPI Key）
-5. 初始化数据库（首次启动或表结构有变动时）
-   ```sh
-   python init_db.py
-   ```
-6. 启动 FastAPI 服务
-   ```sh
-   uvicorn main:app --reload
-   ```
-   - 默认访问地址：[http://127.0.0.1:8000](http://127.0.0.1:8000)
-   - Swagger 文档：[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-
----
-
-### 2. 启动前端（Vite/React）
-
-1. 进入前端目录
-   ```sh
-   cd frontend
-   ```
-2. 安装依赖
-   ```sh
-   npm install
-   ```
-3. 启动前端开发服务器
-   ```sh
-   npm run dev
-   ```
-   - 默认访问地址：[http://localhost:5173](http://localhost:5173)
-
----
-
-### 3. 联调与验证
-
-1. 确保后端（8000端口）和前端（5173端口）都已启动。
-2. 在浏览器访问前端页面 [http://localhost:5173](http://localhost:5173)
-3. 进行如下操作：
-   - 查看广告活动列表（数据来自后端）
-   - 创建/编辑广告活动（数据实时写入后端数据库）
-   - 体验AI建议、审批、自动执行、行业快讯等功能
-   - 如遇问题，查看终端输出的错误日志
-
----
-
-### 4. 一键启动（可选 Docker）
-
-如你已配置好 docker-compose.yml，可在项目根目录运行：
-```sh
-docker-compose up --build
+1. 安装依赖
+```bash
+cd backend
+pip install -r requirements.txt
 ```
-- 会自动启动前后端服务。
+
+2. 配置API KEY
+```env
+# .env 文件
+OPENAI_API_KEY=你的OpenAI_API_Key
+DEEPSEEK_API_KEY=你的DeepSeek_API_Key
+NEWS_API_KEY=你的NewsAPI_Key（可选）
+```
+
+3. 初始化数据库
+```bash
+python init_db.py
+```
+
+4. 启动服务
+```bash
+uvicorn main:app --reload
+```
+
+5. 访问API文档
+```
+http://localhost:8000/docs
+```
+
+---
+
+## 部署与扩展
+
+- 支持Docker一键部署，见docker-compose.yml
+- 支持多云环境、定时任务、权限扩展等
 
 ---
 
 ## 联系方式
-
-如有任何报错或疑问，把错误信息发给我，我会帮你快速定位和解决！ 
+如有问题，请联系开发团队。 
